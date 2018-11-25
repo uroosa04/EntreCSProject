@@ -199,18 +199,32 @@ class Ui_Dialog(object):
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
+        parks = ["Garner State Park",
+                 "Yosemite National Park",
+                 "Big Bend State Park",
+                 "Yellow Stone National Park"]
+
         _translate = QtCore.QCoreApplication.translate
         Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
         self.OkayButton.setText(_translate("Dialog", "OK"))
         self.ParkNameWidget.setSortingEnabled(False)
         __sortingEnabled = self.ParkNameWidget.isSortingEnabled()
         self.ParkNameWidget.setSortingEnabled(False)
-        item = self.ParkNameWidget.item(0)
+
+        i = 0
+        for location in parks:
+            item = self.ParkNameWidget.item(i)
+            item.setText(_translate("Dialog", location))
+            item.setTextAlignment(QtCore.Qt.AlignCenter)
+            i += 1
+
+        """item = self.ParkNameWidget.item(0)
         item.setText(_translate("Dialog", "Yosemite National Park"))
         item = self.ParkNameWidget.item(1)
         item.setText(_translate("Dialog", "Big Bend State Park"))
         item = self.ParkNameWidget.item(2)
-        item.setText(_translate("Dialog", "Yellow Stone National Park"))
+        item.setText(_translate("Dialog", "Yellow Stone National Park"))"""
+
         self.ParkNameWidget.setSortingEnabled(__sortingEnabled)
         self.RouteLabel.setText(_translate("Dialog", "Choose Your Location"))
         self.label.setText(_translate("Dialog", "Weather"))
