@@ -27,10 +27,18 @@ class Ui_Dialog(object):
         self.page.setAutoFillBackground(False)
         self.page.setStyleSheet("#page {background-image: url(:/newPrefix/mountain.jpg);\n"
 "}")
+        BUTTONFONT = QtGui.QFont()
+        BUTTONFONT.setFamily("Arial")
+        BUTTONFONT.setPointSize(11)    #Font for all buttons
+        BUTTONFONT.setBold(True)
+        BUTTONFONT.setWeight(75)
+
         self.page.setObjectName("page")
         self.OkayButton = QtWidgets.QPushButton(self.page)
         self.OkayButton.setGeometry(QtCore.QRect(300, 260, 93, 28))
         self.OkayButton.setObjectName("OkayButton")
+        self.OkayButton.setFont(BUTTONFONT)
+
         self.ParkNameWidget = QtWidgets.QListWidget(self.page)
         self.ParkNameWidget.setGeometry(QtCore.QRect(10, 70, 391, 101))
         font = QtGui.QFont()
@@ -103,19 +111,20 @@ class Ui_Dialog(object):
         self.ChooseRouteLabel.setObjectName("label_2")
         self.pushButton = QtWidgets.QPushButton(self.page_2)
         self.pushButton.setGeometry(QtCore.QRect(280, 200, 91, 31))
-        font = QtGui.QFont()
+        '''font = QtGui.QFont()
         font.setFamily("Arial")
         font.setPointSize(11)
         font.setBold(True)
-        font.setWeight(75)
-        self.pushButton.setFont(font)
+        font.setWeight(75)'''
+        self.pushButton.setFont(BUTTONFONT)
         self.pushButton.setObjectName("pushButton")
         self.backButton = QtWidgets.QPushButton(self.page_2)
         self.backButton.setGeometry(QtCore.QRect(280, 240, 93, 28))
-        font = QtGui.QFont()
+        '''font = QtGui.QFont()
         font.setBold(True)
-        font.setWeight(75)
-        self.backButton.setFont(font)
+        font.setWeight(75)'''
+
+        self.backButton.setFont(BUTTONFONT)
         self.backButton.setObjectName("backButton")
         self.horizontalLayoutWidget = QtWidgets.QWidget(self.page_2)
         self.horizontalLayoutWidget.setGeometry(QtCore.QRect(9, 39, 371, 111))
@@ -181,12 +190,13 @@ class Ui_Dialog(object):
         self.GPSDataLabel.setObjectName("label_14")
         self.backButton2 = QtWidgets.QPushButton(self.page_3)
         self.backButton2.setGeometry(QtCore.QRect(270, 150, 93, 28))
-        font = QtGui.QFont()
+        '''font = QtGui.QFont()
         font.setFamily("Arial")
         font.setPointSize(12)
         font.setBold(True)
-        font.setWeight(75)
-        self.backButton2.setFont(font)
+        font.setWeight(75)'''
+
+        self.backButton2.setFont(BUTTONFONT)
         self.backButton2.setObjectName("backButton2")
         self.stackedWidget.addWidget(self.page_3)
 
