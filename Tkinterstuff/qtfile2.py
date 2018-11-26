@@ -11,7 +11,8 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        Dialog.resize(405, 300)
+        #Dialog.resize(320, 480)
+        Dialog.showFullScreen()
         font = QtGui.QFont()
         font.setFamily("Arial")
         font.setPointSize(12)
@@ -19,6 +20,9 @@ class Ui_Dialog(object):
         Dialog.setStyleSheet("")
         Dialog.setSizeGripEnabled(False)
         Dialog.setModal(False)
+        self.gridLayout_1 = QtWidgets.QGridLayout(Dialog)
+        self.gridLayout_1.setObjectName("gridLayout_1")
+
         self.stackedWidget = QtWidgets.QStackedWidget(Dialog)
         self.stackedWidget.setGeometry(QtCore.QRect(-2, -2, 411, 311))
         self.stackedWidget.setStyleSheet("")
@@ -27,17 +31,25 @@ class Ui_Dialog(object):
         self.page.setAutoFillBackground(False)
         self.page.setStyleSheet("#page {background-image: url(:/newPrefix/mountain.jpg);\n"
 "}")
+        self.page.setObjectName("page")
+
+
         BUTTONFONT = QtGui.QFont()
         BUTTONFONT.setFamily("Arial")
         BUTTONFONT.setPointSize(11)    #Font for all buttons
         BUTTONFONT.setBold(True)
         BUTTONFONT.setWeight(75)
 
-        self.page.setObjectName("page")
+
         self.OkayButton = QtWidgets.QPushButton(self.page)
         self.OkayButton.setGeometry(QtCore.QRect(300, 260, 93, 28))
         self.OkayButton.setObjectName("OkayButton")
         self.OkayButton.setFont(BUTTONFONT)
+
+        self.GPSButton = QtWidgets.QPushButton(self.page)
+        self.GPSButton.setGeometry(QtCore.QRect(15, 260, 50, 28))
+        self.GPSButton.setObjectName("GPSButton")
+        self.GPSButton.setFont(BUTTONFONT)
 
         self.ParkNameWidget = QtWidgets.QListWidget(self.page)
         self.ParkNameWidget.setGeometry(QtCore.QRect(10, 70, 391, 101))
@@ -67,6 +79,7 @@ class Ui_Dialog(object):
         self.ParkNameWidget.addItem(item)
         item = QtWidgets.QListWidgetItem()
         self.ParkNameWidget.addItem(item)
+
         self.RouteLabel = QtWidgets.QLabel(self.page)
         self.RouteLabel.setGeometry(QtCore.QRect(80, 20, 251, 21))
         font = QtGui.QFont()
@@ -79,6 +92,14 @@ class Ui_Dialog(object):
 "")
         self.RouteLabel.setAlignment(QtCore.Qt.AlignCenter)
         self.RouteLabel.setObjectName("RouteLabel")
+
+        self.pageGrid = QtWidgets.QGridLayout(self.page)
+        self.pageGrid.setObjectName("pageGrid")
+        self.pageGrid.addWidget(self.RouteLabel, 0, 0, 1, 1)
+        self.pageGrid.addWidget(self.ParkNameWidget, 1, 0, 1, 1)
+        self.pageGrid.addWidget(self.OkayButton, 2, 0, 1, 1)
+        self.pageGrid.addWidget(self.GPSButton, 3, 0, 1, 1)
+
         self.stackedWidget.addWidget(self.page)
         self.page_2 = QtWidgets.QWidget()
         self.page_2.setStyleSheet("#page_2 {background-image: url(:/newPrefix/mountain.jpg);}")
@@ -134,21 +155,37 @@ class Ui_Dialog(object):
         self.horizontalLayout.setObjectName("horizontalLayout")
         self.weatherLabel = QtWidgets.QLabel(self.horizontalLayoutWidget)
         self.weatherLabel.setAlignment(QtCore.Qt.AlignCenter)
-        self.weatherLabel.setObjectName("label_8")
+        self.weatherLabel.setObjectName("weatherLabel")
         self.horizontalLayout.addWidget(self.weatherLabel)
         self.weatherLabel2 = QtWidgets.QLabel(self.horizontalLayoutWidget)
         self.weatherLabel2.setAlignment(QtCore.Qt.AlignCenter)
-        self.weatherLabel2.setObjectName("label_7")
+        self.weatherLabel2.setObjectName("weatherLabel2")
         self.horizontalLayout.addWidget(self.weatherLabel2)
         self.weatherLabel3 = QtWidgets.QLabel(self.horizontalLayoutWidget)
         self.weatherLabel3.setAlignment(QtCore.Qt.AlignCenter)
-        self.weatherLabel3.setObjectName("label_9")
+        self.weatherLabel3.setObjectName("weatherLabel3")
         self.horizontalLayout.addWidget(self.weatherLabel3)
+
+        self.page2Grid = QtWidgets.QGridLayout(self.page_2)
+        self.page2Grid.addWidget(self.label, 0, 0, 1, 1)
+        self.page2Grid.addWidget(self.graphicsView, 1, 0, 1, 3)
+        self.page2Grid.addWidget(self.ChooseRouteLabel, 2, 0, 1, 1)
+        self.page2Grid.addWidget(self.horizontalLayoutWidget, 1, 0, 1, 3)
+        self.page2Grid.addWidget(self.listWidget, 3, 0, 2, 2)
+        self.page2Grid.addWidget(self.pushButton, 3, 2, 1, 1)
+        self.page2Grid.addWidget(self.backButton,4, 2, 1, 1)
         self.stackedWidget.addWidget(self.page_2)
+
+
         self.page_3 = QtWidgets.QWidget()
         self.page_3.setStyleSheet("#page_3 {background-image: url(:/newPrefix/mountain.jpg);}")
         self.page_3.setObjectName("page_3")
-        self.gridLayoutWidget = QtWidgets.QWidget(self.page_3)
+        self.stackedWidget.addWidget(self.page_3)
+
+        self.page_4 = QtWidgets.QWidget()
+        self.page_4.setStyleSheet("#page_4 {background-image: url(:/newPrefix/mountain.jpg);}")
+        self.page_4.setObjectName("page_4")
+        self.gridLayoutWidget = QtWidgets.QWidget(self.page_4)
         self.gridLayoutWidget.setGeometry(QtCore.QRect(0, 0, 221, 301))
         self.gridLayoutWidget.setObjectName("gridLayoutWidget")
         self.gridLayout = QtWidgets.QGridLayout(self.gridLayoutWidget)
@@ -178,7 +215,7 @@ class Ui_Dialog(object):
         self.GPSlabel42 = QtWidgets.QLabel(self.gridLayoutWidget)
         self.GPSlabel42.setObjectName("GPSlabel42")
         self.gridLayout.addWidget(self.GPSlabel42, 3, 1, 1, 1)
-        self.GPSDataLabel = QtWidgets.QLabel(self.page_3)
+        self.GPSDataLabel = QtWidgets.QLabel(self.page_4)
         self.GPSDataLabel.setGeometry(QtCore.QRect(260, 20, 111, 21))
         font = QtGui.QFont()
         font.setFamily("Arial")
@@ -187,8 +224,8 @@ class Ui_Dialog(object):
         font.setWeight(75)
         self.GPSDataLabel.setFont(font)
         self.GPSDataLabel.setStyleSheet("color: rgb(255, 255, 255);")
-        self.GPSDataLabel.setObjectName("label_14")
-        self.backButton2 = QtWidgets.QPushButton(self.page_3)
+        self.GPSDataLabel.setObjectName("GPSDataLabel")
+        self.backButton2 = QtWidgets.QPushButton(self.page_4)
         self.backButton2.setGeometry(QtCore.QRect(270, 150, 93, 28))
         '''font = QtGui.QFont()
         font.setFamily("Arial")
@@ -198,16 +235,23 @@ class Ui_Dialog(object):
 
         self.backButton2.setFont(BUTTONFONT)
         self.backButton2.setObjectName("backButton2")
-        self.stackedWidget.addWidget(self.page_3)
+
+        self.page4Grid = QtWidgets.QGridLayout(self.page_4)
+        self.page4Grid.addWidget(self.gridLayoutWidget, 0, 0, 4, 2)
+        self.page4Grid.addWidget(self.GPSDataLabel, 0, 3, 1, 1)
+        self.page4Grid.addWidget(self.backButton2, 2, 3, 1, 1)
+        self.stackedWidget.addWidget(self.page_4)
 
         self.retranslateUi(Dialog)
         self.stackedWidget.setCurrentIndex(0)
         self.OkayButton.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(1))
+        self.GPSButton.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(3))
         self.pushButton.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(2))
         self.backButton.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(0))
-        self.backButton2.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(1))
+        self.backButton2.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(0))
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
+        self.gridLayout_1.addWidget(self.stackedWidget, 0, 0, 1, 1)
     def retranslateUi(self, Dialog):
         parks = ["Garner State Park",
                  "Yosemite National Park",
@@ -217,6 +261,7 @@ class Ui_Dialog(object):
         _translate = QtCore.QCoreApplication.translate
         Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
         self.OkayButton.setText(_translate("Dialog", "OK"))
+        self.GPSButton.setText(_translate("Dialog", "GPS"))
         self.ParkNameWidget.setSortingEnabled(False)
         __sortingEnabled = self.ParkNameWidget.isSortingEnabled()
         self.ParkNameWidget.setSortingEnabled(False)
