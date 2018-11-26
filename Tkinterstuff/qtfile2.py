@@ -7,12 +7,64 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+import json
+from urllib.request import urlopen
+from urllib.parse import urlencode
+import reverse_geocoder as rg
 
 class Ui_Dialog(object):
+
+    def doRequest(self):
+        coordinates = (29.7604, -95.3698)
+        results = rg.search(coordinates)
+        city = results[0]['name']
+        state = results[0]['admin1']
+        baseurl = "https://query.yahooapis.com/v1/public/yql?"
+        # Where city and state goes
+        cityAndState = city + ", " + state
+        parse = "\"" + cityAndState + "\")"
+        yql_query = "select * from weather.forecast where woeid in (select woeid from geo.places(1) where text="
+        yql_query += parse
+        yql_url = baseurl + urlencode({'q': yql_query}) + "&format=json"
+        result = urlopen(yql_url).read()
+        data = json.loads(result)
+
+        #Wheater Labels
+        _translate = QtCore.QCoreApplication.translate
+        wind = "Wind\n" + \
+               "Chill: " + data['query']['results']['channel']['wind']['chill'] + data['query']['results']['channel']['units']['temperature'] + "\n" + "Direction: " + data['query']['results']['channel']['wind']['direction'] + "°" + "\n" + "Speed: " + data['query']['results']['channel']['wind']['speed'] + data['query']['results']['channel']['units']['speed']
+        temp = ""
+        dailyWeatherArray = data['query']['results']['channel']['item']['forecast']
+        for x in range(3):
+            temp += "\n"
+            temp += "High: " + dailyWeatherArray[x]['high'] + data['query']['results']['channel']['units']['temperature']
+            temp += "\n"
+            temp += "Low: " + dailyWeatherArray[x]['low'] + data['query']['results']['channel']['units']['temperature']
+            temp += "\n"
+            temp += "Day: " + dailyWeatherArray[x]['day']
+            temp += "\n"
+            temp += dailyWeatherArray[x]['text']
+            temp += "\n"
+
+        extra = "Humidity: " + data['query']['results']['channel']['atmosphere']['humidity'] + "%" + "\n" + \
+                "Pressure: " + str(round((float(data['query']['results']['channel']['atmosphere']['pressure']) * 0.02953), 2)) + data['query']['results']['channel']['units']['pressure'] + "\n" + \
+                "Sunrise: " + data['query']['results']['channel']['astronomy']['sunrise'] + "\n" + \
+                "Sunset: " + data['query']['results']['channel']['astronomy']['sunset']
+
+        wind += "\n" + "\n" + extra
+        self.weatherLabel.setText(_translate("Dialog", wind))
+        self.weatherLabel2.setText(_translate("Dialog", temp))
+        #self.weatherLabel3.setText(_translate("Dialog", extra))
+        print(data)
+        self.weatherLabel.setSizePolicy(QtWidgets.QSizePolicy.Ignored, QtWidgets.QSizePolicy.Ignored)
+        self.weatherLabel2.setSizePolicy(QtWidgets.QSizePolicy.Ignored, QtWidgets.QSizePolicy.Ignored)
+        #self.weatherLabel3.setSizePolicy(QtWidgets.QSizePolicy.Ignored, QtWidgets.QSizePolicy.Ignored)
+
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
-        #Dialog.resize(320, 480)
-        Dialog.showFullScreen()
+        Dialog.resize(320, 480)
+        Dialog.setMaximumSize(320,480)
+        #Dialog.showFullScreen()
         font = QtGui.QFont()
         font.setFamily("Arial")
         font.setPointSize(12)
@@ -55,7 +107,7 @@ class Ui_Dialog(object):
         self.ParkNameWidget.setGeometry(QtCore.QRect(10, 70, 391, 101))
         font = QtGui.QFont()
         font.setFamily("Arial")
-        font.setPointSize(12)
+        font.setPointSize(10)
         font.setBold(True)
         font.setWeight(75)
         self.ParkNameWidget.setFont(font)
@@ -161,10 +213,10 @@ class Ui_Dialog(object):
         self.weatherLabel2.setAlignment(QtCore.Qt.AlignCenter)
         self.weatherLabel2.setObjectName("weatherLabel2")
         self.horizontalLayout.addWidget(self.weatherLabel2)
-        self.weatherLabel3 = QtWidgets.QLabel(self.horizontalLayoutWidget)
+        '''self.weatherLabel3 = QtWidgets.QLabel(self.horizontalLayoutWidget)
         self.weatherLabel3.setAlignment(QtCore.Qt.AlignCenter)
         self.weatherLabel3.setObjectName("weatherLabel3")
-        self.horizontalLayout.addWidget(self.weatherLabel3)
+        self.horizontalLayout.addWidget(self.weatherLabel3)'''
 
         self.page2Grid = QtWidgets.QGridLayout(self.page_2)
         self.page2Grid.addWidget(self.label, 0, 0, 1, 1)
@@ -244,6 +296,7 @@ class Ui_Dialog(object):
 
         self.retranslateUi(Dialog)
         self.stackedWidget.setCurrentIndex(0)
+        self.OkayButton.clicked.connect(lambda : self.doRequest())
         self.OkayButton.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(1))
         self.GPSButton.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(3))
         self.pushButton.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(2))
@@ -286,9 +339,7 @@ class Ui_Dialog(object):
         self.ChooseRouteLabel.setText(_translate("Dialog", "Choose Your Route"))
         self.pushButton.setText(_translate("Dialog", "Continue"))
         self.backButton.setText(_translate("Dialog", "Back"))
-        self.weatherLabel.setText(_translate("Dialog", "TextLabel"))
-        self.weatherLabel2.setText(_translate("Dialog", "TextLabel"))
-        self.weatherLabel3.setText(_translate("Dialog", "TextLabel"))
+
         self.GPSlabel21.setText(_translate("Dialog", "TextLabel"))
         self.GPSlabel31.setText(_translate("Dialog", "TextLabel"))
         self.GPSlabel12.setText(_translate("Dialog", "TextLabel"))
