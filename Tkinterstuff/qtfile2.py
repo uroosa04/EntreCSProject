@@ -63,7 +63,7 @@ class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
         Dialog.resize(320, 480)
-        Dialog.setMaximumSize(320,480)
+        Dialog.setFixedSize(320,480)
         #Dialog.showFullScreen()
         font = QtGui.QFont()
         font.setFamily("Arial")
