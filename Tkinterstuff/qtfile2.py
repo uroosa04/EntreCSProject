@@ -14,13 +14,14 @@ from urllib.parse import urlencode
 import reverse_geocoder as rg
 
 class Ui_Dialog(object):
-    
+
     def gpsRequest(self):
 
         lat = ""
         lon = ""
         alt = ""
         timestamp = ""
+        gpsList = []
 
         try:
             with open('data.nmea') as fp:
@@ -28,12 +29,14 @@ class Ui_Dialog(object):
                 print(line)
                 for row in line:
                     if(row[0] == "$GPGGA"):
-                        timestamp = "Time: " + row[1]
-                        lat = "Latitude: " + row[2] + row[3]
-                        lon = "Longitude: " + row[4] + row[5]
-                        alt = "Altitude: " + row[9] + row[10]
+                        timestamp = row[1]
+                        lat = row[2] + row[3]
+                        lon = row[4] + row[5]
+                        alt = row[9] + row[10]
+                        gpsList.append(row)
 
-            fp.close()
+                print(gpsList[-1])
+                fp.close()
         except:
             print("Cannot Process GPS File Data.")
 
@@ -47,7 +50,7 @@ class Ui_Dialog(object):
         #self.GPSlabel32.setText(_translate("Dialog", "TextLabel"))
         #self.GPSlabel42.setText(_translate("Dialog", "TextLabel"))
         self.GPSDataLabel.setText(_translate("Dialog", "GPS Data"))
-    
+
     def doRequest(self):
         coordinates = (29.7604, -95.3698)
         results = rg.search(coordinates)
@@ -70,16 +73,15 @@ class Ui_Dialog(object):
         temp = ""
         dailyWeatherArray = data['query']['results']['channel']['item']['forecast']
         for x in range(3):
-            temp += dailyWeatherArray[x]['day']
             temp += "\n"
             temp += "High: " + dailyWeatherArray[x]['high'] + data['query']['results']['channel']['units']['temperature']
             temp += "\n"
             temp += "Low: " + dailyWeatherArray[x]['low'] + data['query']['results']['channel']['units']['temperature']
             temp += "\n"
+            temp += "Day: " + dailyWeatherArray[x]['day']
+            temp += "\n"
             temp += dailyWeatherArray[x]['text']
             temp += "\n"
-            if(x <= 1) :
-                temp += "\n"
 
         extra = "Humidity: " + data['query']['results']['channel']['atmosphere']['humidity'] + "%" + "\n" + \
                 "Pressure: " + str(round((float(data['query']['results']['channel']['atmosphere']['pressure']) * 0.02953), 2)) + data['query']['results']['channel']['units']['pressure'] + "\n" + \
@@ -304,10 +306,51 @@ class Ui_Dialog(object):
         self.page2Grid.addWidget(self.backButton,4, 2, 1, 1)
         self.stackedWidget.addWidget(self.page_2)
 
-
         self.page_3 = QtWidgets.QWidget()
         self.page_3.setStyleSheet("#page_3 {background-image: url(:/newPrefix/mountain.jpg);}")
         self.page_3.setObjectName("page_3")
+        self.page3Grid = QtWidgets.QGridLayout(self.page_3)
+        self.page3Grid.setObjectName("page3Grid")
+        self.page3GridLayoutWidget = QtWidgets.QWidget(self.page_3)
+        self.page3GridLayoutWidget.setGeometry(QtCore.QRect(0, 0, 221, 301))
+        self.page3GridLayoutWidget.setObjectName("page3GridLayoutWidget")
+        self.page3GridLayout = QtWidgets.QGridLayout(self.page3GridLayoutWidget)
+        self.page3GridLayout.setContentsMargins(0, 0, 0, 0)
+        self.page3GridLayout.setObjectName("page3GridLayout")
+        self.algoData11 = QtWidgets.QLabel(self.page3GridLayoutWidget)
+        self.algoData11.setObjectName("algoData11")
+        self.page3GridLayout.addWidget(self.algoData11, 1, 0, 1, 1)
+        self.algoData12 = QtWidgets.QLabel(self.page3GridLayoutWidget)
+        self.algoData12.setObjectName("algoData12")
+        self.page3GridLayout.addWidget(self.algoData12, 1, 0, 1, 1)
+        self.algoData21 = QtWidgets.QLabel(self.page3GridLayoutWidget)
+        self.algoData21.setObjectName("algoData21")
+        self.page3GridLayout.addWidget(self.algoData21, 1, 0, 1, 1)
+        self.algoData22 = QtWidgets.QLabel(self.page3GridLayoutWidget)
+        self.algoData22.setObjectName("algoData22")
+        self.page3GridLayout.addWidget(self.algoData22, 1, 0, 1, 1)
+        self.algoData31 = QtWidgets.QLabel(self.page3GridLayoutWidget)
+        self.algoData31.setObjectName("algoData31")
+        self.page3GridLayout.addWidget(self.algoData31, 1, 0, 1, 1)
+        self.algoData32 = QtWidgets.QLabel(self.page3GridLayoutWidget)
+        self.algoData32.setObjectName("algoData32")
+        self.page3GridLayout.addWidget(self.algoData32, 1, 0, 1, 1)
+        self.algoData41 = QtWidgets.QLabel(self.page3GridLayoutWidget)
+        self.algoData41.setObjectName("algoData41")
+        self.page3GridLayout.addWidget(self.algoData41, 1, 0, 1, 1)
+        self.algoData42 = QtWidgets.QLabel(self.page3GridLayoutWidget)
+        self.algoData42.setObjectName("algoData42")
+        self.page3GridLayout.addWidget(self.algoData42, 1, 0, 1, 1)
+        self.algoData51 = QtWidgets.QLabel(self.page3GridLayoutWidget)
+        self.algoData51.setObjectName("algoData51")
+        self.page3GridLayout.addWidget(self.algoData51, 1, 0, 1, 1)
+        self.backButton3 = QtWidgets.QPushButton(self.page_3)
+        self.backButton3.setGeometry(QtCore.QRect(270, 150, 93, 28))
+        self.backButton3.setFont(BUTTONFONT)
+        self.backButton3.setObjectName("backButton3")
+        self.backButton3.setText("Back")
+        self.page3GridLayout.addWidget(self.backButton3, 3, 1, 1, 1)
+        self.page3GridLayout.addWidget(self.page3GridLayoutWidget, 0, 0, 5, 2)
         self.stackedWidget.addWidget(self.page_3)
 
         self.page_4 = QtWidgets.QWidget()
