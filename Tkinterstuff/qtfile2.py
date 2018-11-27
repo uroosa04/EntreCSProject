@@ -330,9 +330,9 @@ class Ui_Dialog(object):
 
         self.retranslateUi(Dialog)
         self.stackedWidget.setCurrentIndex(0)
-        self.OkayButton.clicked.connect(lambda : self.doRequest())
-        self.OkayButton.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(1))
+
         self.GPSButton.clicked.connect(lambda: self.gpsRequest())
+        self.OkayButton.clicked.connect(lambda: self.assertGarner())#lambda: self.stackedWidget.setCurrentIndex(1))
         self.GPSButton.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(3))
         self.pushButton.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(2))
         self.backButton.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(0))
@@ -340,11 +340,38 @@ class Ui_Dialog(object):
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
         self.gridLayout_1.addWidget(self.stackedWidget, 0, 0, 1, 1)
+
+    def assertGarner(self):
+        for item in self.ParkNameWidget.selectedItems():
+            if item.text() == "Garner State Park":
+                self.doRequest()
+                self.stackedWidget.setCurrentIndex(1)
+            else:
+                msg = QtWidgets.QMessageBox()
+                msg.setIcon(QtWidgets.QMessageBox.Information)
+                msg.setText("Coming Soon!")
+                msg.setStandardButtons(QtWidgets.QMessageBox.Ok)
+                msg.setWindowTitle("Error")
+                msg.exec()
+
+
     def retranslateUi(self, Dialog):
         parks = ["Garner State Park",
                  "Yosemite National Park",
                  "Big Bend State Park",
                  "Yellow Stone National Park"]
+
+        trails = ["Old Entrance Road",
+                  "Donovan Trail",
+                  "Bridges Trail",
+                  "Crystal Cave Trail",
+                  "Blinn River Trail",
+                  "Old Blady Trail",
+                  "Foshee Trail",
+                  "Ashe Juniper Trail",
+                  "Old Horse Trail",
+                  "Frio Canyon Trail"
+        ]
 
         _translate = QtCore.QCoreApplication.translate
         Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
