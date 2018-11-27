@@ -21,19 +21,26 @@ class Ui_Dialog(object):
         lon = ""
         alt = ""
         timestamp = ""
+        gpsList = []
 
         try:
             with open('data.nmea') as fp:
                 line = csv.reader(fp)
                 print(line)
                 for row in line:
-                    if(row[0] == "$GPGGA"):
-                        timestamp = "Time: " + row[1]
-                        lat = "Latitude: " + row[2] + row[3]
-                        lon = "Longitude: " + row[4] + row[5]
-                        alt = "Altitude: " + row[9] + row[10]
+                if(row[0] == "$GPGGA"):
+                #print(row[0] + " = Time: " + row[1] + " Lat: " + row[2] + "" + row[3] + " Lon: " + row[4] + "" + row[5])
+                #print(row)
+                timestamp = row[1]
+                lat = row[2] + row[3]
+                lon = row[4] + row[5]
+                alt = row[9] + row[10]
+                gpsList.append(row) 
 
-            fp.close()
+                #print(timestamp + lat + lon + alt)
+
+                print(gpsList[-1])
+                fp.close()
         except:
             print("Cannot Process GPS File Data.")
 
