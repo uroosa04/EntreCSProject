@@ -89,10 +89,46 @@ class Ui_Dialog(object):
         self.weatherLabel.setText(_translate("Dialog", wind))
         self.weatherLabel2.setText(_translate("Dialog", temp))
         #self.weatherLabel3.setText(_translate("Dialog", extra))
-        print(data)
+        #print(data)
         self.weatherLabel.setSizePolicy(QtWidgets.QSizePolicy.Ignored, QtWidgets.QSizePolicy.Ignored)
         self.weatherLabel2.setSizePolicy(QtWidgets.QSizePolicy.Ignored, QtWidgets.QSizePolicy.Ignored)
         #self.weatherLabel3.setSizePolicy(QtWidgets.QSizePolicy.Ignored, QtWidgets.QSizePolicy.Ignored)
+
+
+    def assertGarner(self):
+        for item in self.ParkNameWidget.selectedItems():
+            if item.text() == self.parks[0]: #Garner State Park
+                self.doRequest()
+
+                _translate = QtCore.QCoreApplication.translate
+                trails = ["Old Entrance Road",
+                          "Donovan Trail",
+                          "Bridges Trail",
+                          "Crystal Cave Trail",
+                          "Blinn River Trail",
+                          "Old Blady Trail",
+                          "Foshee Trail",
+                          "Ashe Juniper Trail",
+                          "Old Horse Trail",
+                          "Frio Canyon Trail"
+                          ]
+
+                i = 0
+                for trail in trails:
+                    item = QtWidgets.QListWidgetItem()
+                    self.listWidget.addItem(item)
+                    item = self.listWidget.item(i)
+                    item.setText(_translate("Dialog", trail))
+                    item.setTextAlignment(QtCore.Qt.AlignCenter)
+                    i += 1
+                self.stackedWidget.setCurrentIndex(1)
+            else:
+                msg = QtWidgets.QMessageBox()
+                msg.setIcon(QtWidgets.QMessageBox.Information)
+                msg.setText("Coming Soon!")
+                msg.setStandardButtons(QtWidgets.QMessageBox.Ok)
+                msg.setWindowTitle("Error")
+                msg.exec()
 
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
@@ -154,7 +190,8 @@ class Ui_Dialog(object):
         self.ParkNameWidget.setWordWrap(False)
         self.ParkNameWidget.setSelectionRectVisible(False)
         self.ParkNameWidget.setObjectName("ParkNameWidget")
-        item = QtWidgets.QListWidgetItem()
+
+        '''item = QtWidgets.QListWidgetItem()
         item.setTextAlignment(QtCore.Qt.AlignCenter)
         self.ParkNameWidget.addItem(item)
         item = QtWidgets.QListWidgetItem()
@@ -164,7 +201,7 @@ class Ui_Dialog(object):
         item.setTextAlignment(QtCore.Qt.AlignCenter)
         self.ParkNameWidget.addItem(item)
         item = QtWidgets.QListWidgetItem()
-        self.ParkNameWidget.addItem(item)
+        self.ParkNameWidget.addItem(item)'''
 
         self.RouteLabel = QtWidgets.QLabel(self.page)
         self.RouteLabel.setGeometry(QtCore.QRect(80, 20, 251, 21))
@@ -206,6 +243,9 @@ class Ui_Dialog(object):
         self.listWidget = QtWidgets.QListWidget(self.page_2)
         self.listWidget.setGeometry(QtCore.QRect(10, 200, 241, 81))
         self.listWidget.setObjectName("listWidget")
+        font = QtGui.QFont()
+        font.setFamily("Arial")
+        self.listWidget.setFont(font)
         self.ChooseRouteLabel = QtWidgets.QLabel(self.page_2)
         self.ChooseRouteLabel.setGeometry(QtCore.QRect(20, 170, 171, 21))
         font = QtGui.QFont()
@@ -341,37 +381,13 @@ class Ui_Dialog(object):
 
         self.gridLayout_1.addWidget(self.stackedWidget, 0, 0, 1, 1)
 
-    def assertGarner(self):
-        for item in self.ParkNameWidget.selectedItems():
-            if item.text() == "Garner State Park":
-                self.doRequest()
-                self.stackedWidget.setCurrentIndex(1)
-            else:
-                msg = QtWidgets.QMessageBox()
-                msg.setIcon(QtWidgets.QMessageBox.Information)
-                msg.setText("Coming Soon!")
-                msg.setStandardButtons(QtWidgets.QMessageBox.Ok)
-                msg.setWindowTitle("Error")
-                msg.exec()
 
 
     def retranslateUi(self, Dialog):
-        parks = ["Garner State Park",
+        self.parks = ["Garner State Park",
                  "Yosemite National Park",
                  "Big Bend State Park",
                  "Yellow Stone National Park"]
-
-        trails = ["Old Entrance Road",
-                  "Donovan Trail",
-                  "Bridges Trail",
-                  "Crystal Cave Trail",
-                  "Blinn River Trail",
-                  "Old Blady Trail",
-                  "Foshee Trail",
-                  "Ashe Juniper Trail",
-                  "Old Horse Trail",
-                  "Frio Canyon Trail"
-        ]
 
         _translate = QtCore.QCoreApplication.translate
         Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
@@ -382,7 +398,9 @@ class Ui_Dialog(object):
         self.ParkNameWidget.setSortingEnabled(False)
 
         i = 0
-        for location in parks:
+        for location in self.parks:
+            item = QtWidgets.QListWidgetItem()
+            self.ParkNameWidget.addItem(item)
             item = self.ParkNameWidget.item(i)
             item.setText(_translate("Dialog", location))
             item.setTextAlignment(QtCore.Qt.AlignCenter)
