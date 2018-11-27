@@ -27,53 +27,53 @@ def getTrailInfo(x):
 	if x==1:
 		print("You have chosen Old Entrance Road!")
 		milesTraveled=.84
-		elevationGain = 160
-		elevationLoss = 0
+		elevationGain = 120
+		elevationLoss = 20
 	elif x==2:
 		print("You have chosen Donovan Trail!")
 		milesTraveled=.71
 		elevationGain = 240
-		elevationLoss = 0
+		elevationLoss = 40
 	elif x==3:
 		print("You have chosen Bridges Trail!")
 		milesTraveled=.65
-		elevationGain = 400
-		elevationLoss = 0
+		elevationGain = 40
+		elevationLoss = 40
 	elif x==4:
 		print("You have chosen Crystal Cave Trail!")
 		milesTraveled=.62
-		elevationGain = 340
-		elevationLoss = 0
+		elevationGain = 360
+		elevationLoss = 40
 	elif x==5:
 		print("You have chosen Blinn River Trail!")
 		milesTraveled=.53
 		elevationGain = 20
-		elevationLoss = 0
+		elevationLoss = 20
 	elif x==6:
 		print("You have chosen Old Baldy Trail!")
 		milesTraveled=.53
-		elevationGain = 480
-		elevationLoss = 0
+		elevationGain = 440
+		elevationLoss = 40
 	elif x==7:
 		print("You have chosen Foshee Trail!")
 		milesTraveled=1.66
-		elevationGain = 560
-		elevationLoss = 0
+		elevationGain = 420
+		elevationLoss = 360
 	elif x==8:
 		print("You have chosen Ashe Juniper Trail!")
 		milesTraveled=2.49
-		elevationGain = 260
-		elevationLoss = 0
+		elevationGain = 320
+		elevationLoss = 200
 	elif x==9:
 		print("You have chosen Old Horse Trail!")
 		milesTraveled=.48
 		elevationGain = 80
-		elevationLoss = 0
+		elevationLoss = 20
 	elif x==10:
 		print("You have chosen Frio Canyon Trail!")
 		milesTraveled=2.88
-		elevationGain = 320
-		elevationLoss = 0
+		elevationGain = 140
+		elevationLoss = 140
 	else:
 		print("Invalid entry. Please try again.")						
 
