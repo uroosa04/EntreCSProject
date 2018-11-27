@@ -16,6 +16,12 @@ import reverse_geocoder as rg
 class Ui_Dialog(object):
     
     def gpsRequest(self):
+
+        lat = ""
+        lon = ""
+        alt = ""
+        timestamp = ""
+
         try:
             with open('data.nmea') as fp:
                 line = csv.reader(fp)
@@ -30,7 +36,8 @@ class Ui_Dialog(object):
             fp.close()
         except:
             print("Cannot Process GPS File Data.")
-    
+
+        _translate = QtCore.QCoreApplication.translate
         self.GPSlabel21.setText(_translate("Dialog", lat))
         self.GPSlabel31.setText(_translate("Dialog", lon))
         #self.GPSlabel12.setText(_translate("Dialog", "TextLabel"))
