@@ -7,13 +7,47 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+import csv
 import json
 from urllib.request import urlopen
 from urllib.parse import urlencode
 import reverse_geocoder as rg
 
 class Ui_Dialog(object):
+    
+    def gpsRequest(self):
 
+        lat = ""
+        lon = ""
+        alt = ""
+        timestamp = ""
+
+        try:
+            with open('data.nmea') as fp:
+                line = csv.reader(fp)
+                print(line)
+                for row in line:
+                    if(row[0] == "$GPGGA"):
+                        timestamp = "Time: " + row[1]
+                        lat = "Latitude: " + row[2] + row[3]
+                        lon = "Longitude: " + row[4] + row[5]
+                        alt = "Altitude: " + row[9] + row[10]
+
+            fp.close()
+        except:
+            print("Cannot Process GPS File Data.")
+
+        _translate = QtCore.QCoreApplication.translate
+        self.GPSlabel21.setText(_translate("Dialog", lat))
+        self.GPSlabel31.setText(_translate("Dialog", lon))
+        #self.GPSlabel12.setText(_translate("Dialog", "TextLabel"))
+        self.GPSlabel11.setText(_translate("Dialog", timestamp))
+        self.GPSlabel41.setText(_translate("Dialog", alt))
+        #self.GPSlabel22.setText(_translate("Dialog", "TextLabel"))
+        #self.GPSlabel32.setText(_translate("Dialog", "TextLabel"))
+        #self.GPSlabel42.setText(_translate("Dialog", "TextLabel"))
+        self.GPSDataLabel.setText(_translate("Dialog", "GPS Data"))
+    
     def doRequest(self):
         coordinates = (29.7604, -95.3698)
         results = rg.search(coordinates)
@@ -296,6 +330,8 @@ class Ui_Dialog(object):
 
         self.retranslateUi(Dialog)
         self.stackedWidget.setCurrentIndex(0)
+
+        self.GPSButton.clicked.connect(lambda: self.gpsRequest())
         self.OkayButton.clicked.connect(lambda: self.assertGarner())#lambda: self.stackedWidget.setCurrentIndex(1))
         self.GPSButton.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(3))
         self.pushButton.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(2))
@@ -366,15 +402,7 @@ class Ui_Dialog(object):
         self.pushButton.setText(_translate("Dialog", "Continue"))
         self.backButton.setText(_translate("Dialog", "Back"))
 
-        self.GPSlabel21.setText(_translate("Dialog", "TextLabel"))
-        self.GPSlabel31.setText(_translate("Dialog", "TextLabel"))
-        self.GPSlabel12.setText(_translate("Dialog", "TextLabel"))
-        self.GPSlabel11.setText(_translate("Dialog", "TextLabel"))
-        self.GPSlabel41.setText(_translate("Dialog", "TextLabel"))
-        self.GPSlabel22.setText(_translate("Dialog", "TextLabel"))
-        self.GPSlabel32.setText(_translate("Dialog", "TextLabel"))
-        self.GPSlabel42.setText(_translate("Dialog", "TextLabel"))
-        self.GPSDataLabel.setText(_translate("Dialog", "GPS Data"))
+
         self.backButton2.setText(_translate("Dialog", "Back"))
 
 import resource
