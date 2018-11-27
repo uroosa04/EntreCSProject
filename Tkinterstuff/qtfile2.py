@@ -29,13 +29,17 @@ class Ui_Dialog(object):
                 print(line)
                 for row in line:
                     if(row[0] == "$GPGGA"):
-                        timestamp = row[1]
-                        lat = row[2] + row[3]
-                        lon = row[4] + row[5]
-                        alt = row[9] + row[10]
                         gpsList.append(row) 
 
                 print(gpsList[-1])
+                list = gpsLIst[-1]
+                time = list[1]
+                hour = int(str(time)[:2])
+                hour = hour - 6
+                timestamp = "Time: " + str(hour) + ":" + time[2:4] + ":" + time[4:6]
+                lat = "Latitude: " + list[2] + list[3]
+                lon = "Longitude: " + list[4] + list[5]
+                alt = "Altutude: " + list[9] + list[10]
                 fp.close()
         except:
             print("Cannot Process GPS File Data.")
@@ -65,7 +69,7 @@ class Ui_Dialog(object):
             try:
                 yql_url = baseurl + urlencode({'q': yql_query}) + "&format=json"
                 result = urlopen(yql_url).read()
-                data = json.loads(result)
+                data = json.loads(result.decode('utf-8'))
             except:
                 _translate = QtCore.QCoreApplication.translate
                 self.weatherLabel.setText(_translate("Dialog", 'No'))
