@@ -28,16 +28,12 @@ class Ui_Dialog(object):
                 line = csv.reader(fp)
                 print(line)
                 for row in line:
-                if(row[0] == "$GPGGA"):
-                #print(row[0] + " = Time: " + row[1] + " Lat: " + row[2] + "" + row[3] + " Lon: " + row[4] + "" + row[5])
-                #print(row)
-                timestamp = row[1]
-                lat = row[2] + row[3]
-                lon = row[4] + row[5]
-                alt = row[9] + row[10]
-                gpsList.append(row) 
-
-                #print(timestamp + lat + lon + alt)
+                    if(row[0] == "$GPGGA"):
+                        timestamp = row[1]
+                        lat = row[2] + row[3]
+                        lon = row[4] + row[5]
+                        alt = row[9] + row[10]
+                        gpsList.append(row) 
 
                 print(gpsList[-1])
                 fp.close()
