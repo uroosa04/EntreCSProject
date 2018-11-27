@@ -21,7 +21,6 @@ class Ui_Dialog(object):
         lon = ""
         alt = ""
         timestamp = ""
-        gpsList = []
 
         try:
             with open('data.nmea') as fp:
@@ -29,14 +28,12 @@ class Ui_Dialog(object):
                 print(line)
                 for row in line:
                     if(row[0] == "$GPGGA"):
-                        timestamp = row[1]
-                        lat = row[2] + row[3]
-                        lon = row[4] + row[5]
-                        alt = row[9] + row[10]
-                        gpsList.append(row) 
+                        timestamp = "Time: " + row[1]
+                        lat = "Latitude: " + row[2] + row[3]
+                        lon = "Longitude: " + row[4] + row[5]
+                        alt = "Altitude: " + row[9] + row[10]
 
-                print(gpsList[-1])
-                fp.close()
+            fp.close()
         except:
             print("Cannot Process GPS File Data.")
 
@@ -73,15 +70,16 @@ class Ui_Dialog(object):
         temp = ""
         dailyWeatherArray = data['query']['results']['channel']['item']['forecast']
         for x in range(3):
+            temp += dailyWeatherArray[x]['day']
             temp += "\n"
             temp += "High: " + dailyWeatherArray[x]['high'] + data['query']['results']['channel']['units']['temperature']
             temp += "\n"
             temp += "Low: " + dailyWeatherArray[x]['low'] + data['query']['results']['channel']['units']['temperature']
             temp += "\n"
-            temp += "Day: " + dailyWeatherArray[x]['day']
-            temp += "\n"
             temp += dailyWeatherArray[x]['text']
             temp += "\n"
+            if(x <= 1) :
+                temp += "\n"
 
         extra = "Humidity: " + data['query']['results']['channel']['atmosphere']['humidity'] + "%" + "\n" + \
                 "Pressure: " + str(round((float(data['query']['results']['channel']['atmosphere']['pressure']) * 0.02953), 2)) + data['query']['results']['channel']['units']['pressure'] + "\n" + \
