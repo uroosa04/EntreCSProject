@@ -134,6 +134,7 @@ class Ui_Dialog(object):
         Dialog.setObjectName("Dialog")
         Dialog.resize(320, 480)
         Dialog.setFixedSize(320,480)
+        Dialog.setWindowFlags(QtCore.Qt.FramelessWindowHint)
         #Dialog.showFullScreen()
         font = QtGui.QFont()
         font.setFamily("Arial")
@@ -379,7 +380,8 @@ class Ui_Dialog(object):
         self.backButton2.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(0))
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
-        self.gridLayout_1.addWidget(self.stackedWidget, 0, 0, 1, 1)
+        self.gridLayout_1.addWidget(self.stackedWidget)#, 0, 0, 1, 1)
+        self.gridLayout_1.setContentsMargins(0,0,0,0)
 
 
 
