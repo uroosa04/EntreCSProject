@@ -134,6 +134,7 @@ class Ui_Dialog(object):
             "Long Breaks Time: " + str(longbreakstime) + " mins"+ "\n"
             "Total Total Time: " + str(totalTravelTime) + " hrs"))
 
+
     def gpsRequest(self):
 
         lat = ""
@@ -148,13 +149,19 @@ class Ui_Dialog(object):
                 print(line)
                 for row in line:
                     if(row[0] == "$GPGGA"):
-                        timestamp = row[1]
-                        lat = row[2] + row[3]
-                        lon = row[4] + row[5]
-                        alt = row[9] + row[10]
+
                         gpsList.append(row)
 
                 print(gpsList[-1])
+                list = gpsLIst[-1]
+                time = list[1]
+                hour = int(str(time)[:2])
+                hour = hour - 6
+                timestamp = "Time: " + str(hour) + ":" + time[2:4] + ":" + time[4:6]
+                lat = "Latitude: " + list[2] + list[3]
+                lon = "Longitude: " + list[4] + list[5]
+                alt = "Altutude: " + list[9] + list[10]
+                
                 fp.close()
         except:
             print("Cannot Process GPS File Data.")
@@ -181,40 +188,79 @@ class Ui_Dialog(object):
         parse = "\"" + cityAndState + "\")"
         yql_query = "select * from weather.forecast where woeid in (select woeid from geo.places(1) where text="
         yql_query += parse
-        yql_url = baseurl + urlencode({'q': yql_query}) + "&format=json"
-        result = urlopen(yql_url).read()
-        data = json.loads(result)
 
-        #Wheater Labels
-        _translate = QtCore.QCoreApplication.translate
-        wind = "Wind\n" + \
-               "Chill: " + data['query']['results']['channel']['wind']['chill'] + data['query']['results']['channel']['units']['temperature'] + "\n" + "Direction: " + data['query']['results']['channel']['wind']['direction'] + "°" + "\n" + "Speed: " + data['query']['results']['channel']['wind']['speed'] + data['query']['results']['channel']['units']['speed']
-        temp = ""
-        dailyWeatherArray = data['query']['results']['channel']['item']['forecast']
-        for x in range(3):
-            temp += "\n"
-            temp += "High: " + dailyWeatherArray[x]['high'] + data['query']['results']['channel']['units']['temperature']
-            temp += "\n"
-            temp += "Low: " + dailyWeatherArray[x]['low'] + data['query']['results']['channel']['units']['temperature']
-            temp += "\n"
-            temp += "Day: " + dailyWeatherArray[x]['day']
-            temp += "\n"
-            temp += dailyWeatherArray[x]['text']
-            temp += "\n"
+        try:
+            yql_url = baseurl + urlencode({'q': yql_query}) + "&format=json"
+            result = urlopen(yql_url).read()
+            data = json.loads(result.decode('utf-8'))
+        except:
+            _translate = QtCore.QCoreApplication.translate
+            wind = ""
+            temp = ""
 
-        extra = "Humidity: " + data['query']['results']['channel']['atmosphere']['humidity'] + "%" + "\n" + \
-                "Pressure: " + str(round((float(data['query']['results']['channel']['atmosphere']['pressure']) * 0.02953), 2)) + data['query']['results']['channel']['units']['pressure'] + "\n" + \
-                "Sunrise: " + data['query']['results']['channel']['astronomy']['sunrise'] + "\n" + \
-                "Sunset: " + data['query']['results']['channel']['astronomy']['sunset']
+            try:
+                yql_url = baseurl + urlencode({'q': yql_query}) + "&format=json"
+                result = urlopen(yql_url).read()
+                data = json.loads(result.decode('utf-8'))
+                if os.stat("wind").st_size == 0 or os.stat("temp").st_size == 0:
+                    wind += "No"
+                    temp += "Network"
+                else :
+                    with open('wind', 'r') as myfile:
+                        wind += myfile.read()
+                    with open('temp', 'r') as myfile:
+                        temp += myfile.read()
+            except:
+                wind += "No"
+                temp += "Network"
 
-        wind += "\n" + "\n" + extra
-        self.weatherLabel.setText(_translate("Dialog", wind))
-        self.weatherLabel2.setText(_translate("Dialog", temp))
-        #self.weatherLabel3.setText(_translate("Dialog", extra))
-        #print(data)
-        self.weatherLabel.setSizePolicy(QtWidgets.QSizePolicy.Ignored, QtWidgets.QSizePolicy.Ignored)
-        self.weatherLabel2.setSizePolicy(QtWidgets.QSizePolicy.Ignored, QtWidgets.QSizePolicy.Ignored)
-        #self.weatherLabel3.setSizePolicy(QtWidgets.QSizePolicy.Ignored, QtWidgets.QSizePolicy.Ignored)
+            self.weatherLabel.setText(_translate("Dialog", wind))
+            self.weatherLabel2.setText(_translate("Dialog", temp))
+            # self.weatherLabel3.setText(_translate("Dialog", extra))
+            # print(data)
+            self.weatherLabel.setSizePolicy(QtWidgets.QSizePolicy.Ignored, QtWidgets.QSizePolicy.Ignored)
+            self.weatherLabel2.setSizePolicy(QtWidgets.QSizePolicy.Ignored, QtWidgets.QSizePolicy.Ignored)
+            # self.weatherLabel3.setSizePolicy(QtWidgets.QSizePolicy.Ignored, QtWidgets.QSizePolicy.Ignored)
+        else:
+
+            #Wheater Labels
+            _translate = QtCore.QCoreApplication.translate
+            wind = "Wind\n" + \
+                   "Chill: " + data['query']['results']['channel']['wind']['chill'] + data['query']['results']['channel']['units']['temperature'] + "\n" + "Direction: " + data['query']['results']['channel']['wind']['direction'] + "°" + "\n" + "Speed: " + data['query']['results']['channel']['wind']['speed'] + data['query']['results']['channel']['units']['speed']
+            temp = ""
+            dailyWeatherArray = data['query']['results']['channel']['item']['forecast']
+            for x in range(3):
+                temp += dailyWeatherArray[x]['day']
+                temp += "\n"
+                temp += "High: " + dailyWeatherArray[x]['high'] + data['query']['results']['channel']['units']['temperature']
+                temp += "\n"
+                temp += "Low: " + dailyWeatherArray[x]['low'] + data['query']['results']['channel']['units']['temperature']
+                temp += "\n"
+                temp += dailyWeatherArray[x]['text']
+                temp += "\n"
+                if(x <= 1) :
+                    temp += "\n"
+
+            extra = "Humidity: " + data['query']['results']['channel']['atmosphere']['humidity'] + "%" + "\n" + \
+                    "Pressure: " + str(round((float(data['query']['results']['channel']['atmosphere']['pressure']) * 0.02953), 2)) + data['query']['results']['channel']['units']['pressure'] + "\n" + \
+                    "Sunrise: " + data['query']['results']['channel']['astronomy']['sunrise'] + "\n" + \
+                    "Sunset: " + data['query']['results']['channel']['astronomy']['sunset']
+
+            wind += "\n" + "\n" + extra
+            file2write_wind = open("wind", 'w')
+            file2write_wind.write(wind)
+            file2write_wind.close()
+            file2write_temp = open("temp", 'w')
+            file2write_temp.write(temp)
+            file2write_temp.close()
+
+            self.weatherLabel.setText(_translate("Dialog", wind))
+            self.weatherLabel2.setText(_translate("Dialog", temp))
+            #self.weatherLabel3.setText(_translate("Dialog", extra))
+            #print(data)
+            self.weatherLabel.setSizePolicy(QtWidgets.QSizePolicy.Ignored, QtWidgets.QSizePolicy.Ignored)
+            self.weatherLabel2.setSizePolicy(QtWidgets.QSizePolicy.Ignored, QtWidgets.QSizePolicy.Ignored)
+            #self.weatherLabel3.setSizePolicy(QtWidgets.QSizePolicy.Ignored, QtWidgets.QSizePolicy.Ignored)
 
 
     def assertGarner(self):
@@ -223,6 +269,7 @@ class Ui_Dialog(object):
                 self.doRequest()
 
                 _translate = QtCore.QCoreApplication.translate
+
                 self.trails = ["Old Entrance Road",
                           "Donovan Trail",
                           "Bridges Trail",
@@ -236,7 +283,9 @@ class Ui_Dialog(object):
                           ]
 
                 i = 0
+
                 for trail in self.trails:
+
                     item = QtWidgets.QListWidgetItem()
                     self.listWidget.addItem(item)
                     item = self.listWidget.item(i)
@@ -257,6 +306,7 @@ class Ui_Dialog(object):
         for item in self.listWidget.selectedItems():
             self.routeNumber = self.trails.index(item.text()) #item.text
             self.stackedWidget.setCurrentIndex(2)
+
 
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
@@ -431,6 +481,7 @@ class Ui_Dialog(object):
         self.page2Grid.addWidget(self.backButton,4, 2, 1, 1)
         self.stackedWidget.addWidget(self.page_2)
 
+
         self.page_3 = QtWidgets.QWidget()
         self.page_3.setStyleSheet("#page_3 {background-image: url(:/newPrefix/mountain.jpg);}")
         self.page_3.setObjectName("page_3")
@@ -550,6 +601,7 @@ class Ui_Dialog(object):
         self.backButton.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(0))
         self.backButton2.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(0))
         self.backButton3.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(1))
+        
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
         self.gridLayout_1.addWidget(self.stackedWidget)#, 0, 0, 1, 1)
