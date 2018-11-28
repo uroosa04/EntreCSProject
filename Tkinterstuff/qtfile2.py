@@ -29,7 +29,7 @@ class Ui_Dialog(object):
                 print(line)
                 for row in line:
                     if(row[0] == "$GPGGA"):
-                        gpsList.append(row) 
+                        gpsList.append(row)
 
                 print(gpsList[-1])
                 list = gpsLIst[-1]
@@ -69,7 +69,7 @@ class Ui_Dialog(object):
         try:
             yql_url = baseurl + urlencode({'q': yql_query}) + "&format=json"
             result = urlopen(yql_url).read()
-            data = json.loads(result)
+            data = json.loads(result.decode('utf-8'))
         except:
             _translate = QtCore.QCoreApplication.translate
             wind = ""
