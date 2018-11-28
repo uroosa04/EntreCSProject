@@ -223,7 +223,7 @@ class Ui_Dialog(object):
                 self.doRequest()
 
                 _translate = QtCore.QCoreApplication.translate
-                trails = ["Old Entrance Road",
+                self.trails = ["Old Entrance Road",
                           "Donovan Trail",
                           "Bridges Trail",
                           "Crystal Cave Trail",
@@ -236,7 +236,7 @@ class Ui_Dialog(object):
                           ]
 
                 i = 0
-                for trail in trails:
+                for trail in self.trails:
                     item = QtWidgets.QListWidgetItem()
                     self.listWidget.addItem(item)
                     item = self.listWidget.item(i)
@@ -252,7 +252,11 @@ class Ui_Dialog(object):
                 msg.setWindowTitle("Error")
                 msg.exec()
 
-    #def selectRoute(self):
+    def selectRoute(self):
+        self.routeNumber = 0
+        for item in self.listWidget.selectedItems():
+            self.routeNumber = self.trails.index(item.text()) #item.text
+            self.stackedWidget.setCurrentIndex(2)
 
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
@@ -441,6 +445,8 @@ class Ui_Dialog(object):
         self.algoData11 = QtWidgets.QLabel(self.page3GridLayoutWidget)
         self.algoData11.setObjectName("algoData11")
         self.page3GridLayout.addWidget(self.algoData11, 0, 1, 1, 1)
+        self.algoData11.setFont(font)
+        self.algoData11.setAlignment(QtCore.Qt.AlignCenter)
 
         self.backButton3 = QtWidgets.QPushButton(self.page_3)
         self.backButton3.setGeometry(QtCore.QRect(270, 150, 93, 28))
@@ -452,12 +458,12 @@ class Ui_Dialog(object):
         self.CalculateButton.setFont(BUTTONFONT)
         self.CalculateButton.setObjectName("CalculateButton")
         self.CalculateButton.setText("Calculate")
-        self.page3Grid.addWidget(self.backButton3, 4, 2, 1, 1)
-        self.page3Grid.addWidget(self.CalculateButton, 3, 2, 1, 1)
-        self.page3Grid.addWidget(self.page3GridLayoutWidget, 0, 0, 3, 2)
+        self.page3Grid.addWidget(self.backButton3, 2, 2, 1, 1)
+        self.page3Grid.addWidget(self.CalculateButton, 1, 2, 1, 1)
+        self.page3Grid.addWidget(self.page3GridLayoutWidget, 1, 1, 3, 1)
         self.paceIndexBox = QtWidgets.QComboBox()
         self.paceIndexBox.addItems(['1', '2', '3', '4'])
-        self.page3Grid.addWidget(self.paceIndexBox, 2, 2, 1, 1)
+        self.page3Grid.addWidget(self.paceIndexBox, 0, 2, 1, 1)
 
         #font = QtGui.QFont()
         #font.setFamily("Arial")
@@ -539,8 +545,8 @@ class Ui_Dialog(object):
         self.GPSButton.clicked.connect(lambda: self.gpsRequest())
         self.OkayButton.clicked.connect(lambda: self.assertGarner())#lambda: self.stackedWidget.setCurrentIndex(1))
         self.GPSButton.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(3))
-        self.pushButton.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(2))
-        self.pushButton.clicked.connect(lambda: self.calculateTravelTime(1, 3))
+        self.pushButton.clicked.connect(lambda: self.selectRoute())
+        self.CalculateButton.clicked.connect(lambda: self.calculateTravelTime(self.routeNumber + 1, self.paceIndexBox.currentIndex() + 1))
         self.backButton.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(0))
         self.backButton2.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(0))
         self.backButton3.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(1))
