@@ -12,7 +12,7 @@ import json
 from urllib.request import urlopen
 from urllib.parse import urlencode
 import reverse_geocoder as rg
-
+import os
 class Ui_Dialog(object):
     
     def gpsRequest(self):
@@ -50,64 +50,87 @@ class Ui_Dialog(object):
         #self.GPSlabel32.setText(_translate("Dialog", "TextLabel"))
         #self.GPSlabel42.setText(_translate("Dialog", "TextLabel"))
         self.GPSDataLabel.setText(_translate("Dialog", "GPS Data"))
-    
-        def doRequest(self):
-            coordinates = (29.7604, -95.3698)
-            results = rg.search(coordinates)
-            city = results[0]['name']
-            state = results[0]['admin1']
-            baseurl = "https://query.yahooapis.com/v1/public/yql?"
-            # Where city and state goes
-            cityAndState = city + ", " + state
-            parse = "\"" + cityAndState + "\")"
-            yql_query = "select * from weather.forecast where woeid in (select woeid from geo.places(1) where text="
-            yql_query += parse
+
+    def doRequest(self):
+        coordinates = (29.7604, -95.3698)
+        results = rg.search(coordinates)
+        city = results[0]['name']
+        state = results[0]['admin1']
+        baseurl = "https://query.yahooapis.com/v1/public/yql?"
+        # Where city and state goes
+        cityAndState = city + ", " + state
+        parse = "\"" + cityAndState + "\")"
+        yql_query = "select * from weather.forecast where woeid in (select woeid from geo.places(1) where text="
+        yql_query += parse
+        try:
+            yql_url = baseurl + urlencode({'q': yql_query}) + "&format=json"
+            result = urlopen(yql_url).read()
+            data = json.loads(result)
+        except:
+            _translate = QtCore.QCoreApplication.translate
+            wind = ""
+            temp = ""
+
             try:
-                yql_url = baseurl + urlencode({'q': yql_query}) + "&format=json"
-                result = urlopen(yql_url).read()
-                data = json.loads(result)
+                if os.stat("wind").st_size == 0 or os.stat("temp").st_size == 0:
+                    wind += "No"
+                    temp += "Network"
+                else :
+                    with open('wind', 'r') as myfile:
+                        wind += myfile.read()
+                    with open('temp', 'r') as myfile:
+                        temp += myfile.read()
             except:
-                _translate = QtCore.QCoreApplication.translate
-                self.weatherLabel.setText(_translate("Dialog", 'No'))
-                self.weatherLabel2.setText(_translate("Dialog", 'Network'))
-                # self.weatherLabel3.setText(_translate("Dialog", extra))
-                # print(data)
-                self.weatherLabel.setSizePolicy(QtWidgets.QSizePolicy.Ignored, QtWidgets.QSizePolicy.Ignored)
-                self.weatherLabel2.setSizePolicy(QtWidgets.QSizePolicy.Ignored, QtWidgets.QSizePolicy.Ignored)
-                # self.weatherLabel3.setSizePolicy(QtWidgets.QSizePolicy.Ignored, QtWidgets.QSizePolicy.Ignored)
-            else:
+                wind += "No"
+                temp += "Network"
 
-                #Wheater Labels
-                _translate = QtCore.QCoreApplication.translate
-                wind = "Wind\n" + \
-                       "Chill: " + data['query']['results']['channel']['wind']['chill'] + data['query']['results']['channel']['units']['temperature'] + "\n" + "Direction: " + data['query']['results']['channel']['wind']['direction'] + "°" + "\n" + "Speed: " + data['query']['results']['channel']['wind']['speed'] + data['query']['results']['channel']['units']['speed']
-                temp = ""
-                dailyWeatherArray = data['query']['results']['channel']['item']['forecast']
-                for x in range(3):
-                    temp += dailyWeatherArray[x]['day']
-                    temp += "\n"
-                    temp += "High: " + dailyWeatherArray[x]['high'] + data['query']['results']['channel']['units']['temperature']
-                    temp += "\n"
-                    temp += "Low: " + dailyWeatherArray[x]['low'] + data['query']['results']['channel']['units']['temperature']
-                    temp += "\n"
-                    temp += dailyWeatherArray[x]['text']
-                    temp += "\n"
-                    if(x <= 1) :
-                        temp += "\n"
+            self.weatherLabel.setText(_translate("Dialog", wind))
+            self.weatherLabel2.setText(_translate("Dialog", temp))
+            # self.weatherLabel3.setText(_translate("Dialog", extra))
+            # print(data)
+            self.weatherLabel.setSizePolicy(QtWidgets.QSizePolicy.Ignored, QtWidgets.QSizePolicy.Ignored)
+            self.weatherLabel2.setSizePolicy(QtWidgets.QSizePolicy.Ignored, QtWidgets.QSizePolicy.Ignored)
+            # self.weatherLabel3.setSizePolicy(QtWidgets.QSizePolicy.Ignored, QtWidgets.QSizePolicy.Ignored)
+        else:
 
-                extra = "Humidity: " + data['query']['results']['channel']['atmosphere']['humidity'] + "%" + "\n" + \
-                        "Pressure: " + str(round((float(data['query']['results']['channel']['atmosphere']['pressure']) * 0.02953), 2)) + data['query']['results']['channel']['units']['pressure'] + "\n" + \
-                        "Sunrise: " + data['query']['results']['channel']['astronomy']['sunrise'] + "\n" + \
-                        "Sunset: " + data['query']['results']['channel']['astronomy']['sunset']
+            #Wheater Labels
+            _translate = QtCore.QCoreApplication.translate
+            wind = "Wind\n" + \
+                   "Chill: " + data['query']['results']['channel']['wind']['chill'] + data['query']['results']['channel']['units']['temperature'] + "\n" + "Direction: " + data['query']['results']['channel']['wind']['direction'] + "°" + "\n" + "Speed: " + data['query']['results']['channel']['wind']['speed'] + data['query']['results']['channel']['units']['speed']
+            temp = ""
+            dailyWeatherArray = data['query']['results']['channel']['item']['forecast']
+            for x in range(3):
+                temp += dailyWeatherArray[x]['day']
+                temp += "\n"
+                temp += "High: " + dailyWeatherArray[x]['high'] + data['query']['results']['channel']['units']['temperature']
+                temp += "\n"
+                temp += "Low: " + dailyWeatherArray[x]['low'] + data['query']['results']['channel']['units']['temperature']
+                temp += "\n"
+                temp += dailyWeatherArray[x]['text']
+                temp += "\n"
+                if(x <= 1) :
+                    temp += "\n"
 
-                wind += "\n" + "\n" + extra
-                self.weatherLabel.setText(_translate("Dialog", wind))
-                self.weatherLabel2.setText(_translate("Dialog", temp))
-                #self.weatherLabel3.setText(_translate("Dialog", extra))
-                #print(data)
-                self.weatherLabel.setSizePolicy(QtWidgets.QSizePolicy.Ignored, QtWidgets.QSizePolicy.Ignored)
-                self.weatherLabel2.setSizePolicy(QtWidgets.QSizePolicy.Ignored, QtWidgets.QSizePolicy.Ignored)
-                #self.weatherLabel3.setSizePolicy(QtWidgets.QSizePolicy.Ignored, QtWidgets.QSizePolicy.Ignored)
+            extra = "Humidity: " + data['query']['results']['channel']['atmosphere']['humidity'] + "%" + "\n" + \
+                    "Pressure: " + str(round((float(data['query']['results']['channel']['atmosphere']['pressure']) * 0.02953), 2)) + data['query']['results']['channel']['units']['pressure'] + "\n" + \
+                    "Sunrise: " + data['query']['results']['channel']['astronomy']['sunrise'] + "\n" + \
+                    "Sunset: " + data['query']['results']['channel']['astronomy']['sunset']
+
+            wind += "\n" + "\n" + extra
+            file2write_wind = open("wind", 'w')
+            file2write_wind.write(wind)
+            file2write_wind.close()
+            file2write_temp = open("temp", 'w')
+            file2write_temp.write(temp)
+            file2write_temp.close()
+
+            self.weatherLabel.setText(_translate("Dialog", wind))
+            self.weatherLabel2.setText(_translate("Dialog", temp))
+            #self.weatherLabel3.setText(_translate("Dialog", extra))
+            #print(data)
+            self.weatherLabel.setSizePolicy(QtWidgets.QSizePolicy.Ignored, QtWidgets.QSizePolicy.Ignored)
+            self.weatherLabel2.setSizePolicy(QtWidgets.QSizePolicy.Ignored, QtWidgets.QSizePolicy.Ignored)
+            #self.weatherLabel3.setSizePolicy(QtWidgets.QSizePolicy.Ignored, QtWidgets.QSizePolicy.Ignored)
 
 
     def assertGarner(self):
