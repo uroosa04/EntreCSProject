@@ -76,11 +76,9 @@ class Ui_Dialog(object):
             temp = ""
 
             try:
-<<<<<<< HEAD
                 yql_url = baseurl + urlencode({'q': yql_query}) + "&format=json"
                 result = urlopen(yql_url).read()
                 data = json.loads(result.decode('utf-8'))
-=======
                 if os.stat("wind").st_size == 0 or os.stat("temp").st_size == 0:
                     wind += "No"
                     temp += "Network"
@@ -89,7 +87,6 @@ class Ui_Dialog(object):
                         wind += myfile.read()
                     with open('temp', 'r') as myfile:
                         temp += myfile.read()
->>>>>>> weather
             except:
                 wind += "No"
                 temp += "Network"
