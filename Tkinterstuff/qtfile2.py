@@ -12,9 +12,129 @@ import json
 from urllib.request import urlopen
 from urllib.parse import urlencode
 import reverse_geocoder as rg
-import os
+import math
+
 class Ui_Dialog(object):
-    
+
+    def getTrailInfo(self, x):
+        global milesTraveled
+        global elevationGain
+        global elevationLoss
+        if x==1:
+            print("You have chosen Old Entrance Road!")
+            milesTraveled=.84
+            elevationGain = 120
+            elevationLoss = 20
+        elif x==2:
+            print("You have chosen Donovan Trail!")
+            milesTraveled=.71
+            elevationGain = 240
+            elevationLoss = 40
+        elif x==3:
+            print("You have chosen Bridges Trail!")
+            milesTraveled=.65
+            elevationGain = 40
+            elevationLoss = 40
+        elif x==4:
+            print("You have chosen Crystal Cave Trail!")
+            milesTraveled=.62
+            elevationGain = 360
+            elevationLoss = 40
+        elif x==5:
+            print("You have chosen Blinn River Trail!")
+            milesTraveled=.53
+            elevationGain = 20
+            elevationLoss = 20
+        elif x==6:
+            print("You have chosen Old Baldy Trail!")
+            milesTraveled=.53
+            elevationGain = 440
+            elevationLoss = 40
+        elif x==7:
+            print("You have chosen Foshee Trail!")
+            milesTraveled=1.66
+            elevationGain = 420
+            elevationLoss = 360
+        elif x==8:
+            print("You have chosen Ashe Juniper Trail!")
+            milesTraveled=2.49
+            elevationGain = 320
+            elevationLoss = 200
+        elif x==9:
+            print("You have chosen Old Horse Trail!")
+            milesTraveled=.48
+            elevationGain = 80
+            elevationLoss = 20
+        elif x==10:
+            print("You have chosen Frio Canyon Trail!")
+            milesTraveled=2.88
+            elevationGain = 140
+            elevationLoss = 140
+        else:
+            print("Invalid entry. Please try again.")
+
+    def calculateTravelTime(self, trailNumber, paceIndex):
+        _translate = QtCore.QCoreApplication.translate
+        
+        #Assign trail
+        self.getTrailInfo(trailNumber)
+
+        print(" ")
+
+        #paceIndex=int(input("Input pace index 1 - 4, (1 for beginner, 4 for experienced hiker)"))
+
+        print(" ")
+
+        x =(milesTraveled / 10)
+        fudgeFactor=round(x,1)
+        #print("Fudge Factor: ", fudgeFactor)
+
+        totalMiles = round((milesTraveled + fudgeFactor),1)
+        int(totalMiles)
+        print("Total Miles: " , totalMiles)
+
+
+        climbingRate = 1000 #CONSTANT
+        gainFactor = round(elevationGain / climbingRate,1)
+        #print("Gain Factor: ", gainFactor)
+
+
+        lossRate = 2000 #CONSTANT
+        lossFactor = round((elevationLoss / lossRate),1)
+        #print("Loss Factor: " , lossFactor)
+
+        elevationFactor = (gainFactor - lossFactor)
+        #print("Elevation Factor: " , elevationFactor)
+
+        totalMovingTime = round(((totalMiles/paceIndex)+elevationFactor),1)
+        print("Total Moving Time: ", totalMovingTime, " hours.")
+
+
+        if ((totalMovingTime) > 0) :
+            tempMovingTime=math.floor(totalMovingTime)
+            numLongBreaks=int(tempMovingTime/4)
+            leftoverMovingTime=tempMovingTime-numLongBreaks
+            numshortbreaks=leftoverMovingTime
+            shortbreakstime=(numshortbreaks * 5) 
+            longbreakstime=numLongBreaks * 30
+            print("Short Breaks: ", shortbreakstime, " minutes.")
+            print("Long Breaks: ", longbreakstime, " minutes.")
+        else :
+            shortbreakstime=0
+            longbreakstime=0
+            print("Short Breaks: ", shortbreakstime, " minutes.")
+            print("Long Breaks: ", longbreakstime, " minutes.") 
+
+
+        totalTravelTime = round((totalMovingTime + (shortbreakstime/60) + (longbreakstime/60)),1)
+        print("Total Travel Time: " , totalTravelTime, " hours.")
+        self.algoData11.setText(_translate("Dialog", "Total Miles: " + str(totalMiles) + "\n" +
+            "Total Moving Time: " + str(totalMovingTime) + " hrs" + "\n" +
+            "Short Breaks Time: " + str(shortbreakstime) + " mins" + "\n" +
+            "Long Breaks Time: " + str(longbreakstime) + " mins"+ "\n"
+            "Total Total Time: " + str(totalTravelTime) + " hrs"))
+
+
     def gpsRequest(self):
 
         lat = ""
@@ -29,6 +149,7 @@ class Ui_Dialog(object):
                 print(line)
                 for row in line:
                     if(row[0] == "$GPGGA"):
+
                         gpsList.append(row)
 
                 print(gpsList[-1])
@@ -40,6 +161,7 @@ class Ui_Dialog(object):
                 lat = "Latitude: " + list[2] + list[3]
                 lon = "Longitude: " + list[4] + list[5]
                 alt = "Altutude: " + list[9] + list[10]
+                
                 fp.close()
         except:
             print("Cannot Process GPS File Data.")
@@ -66,6 +188,7 @@ class Ui_Dialog(object):
         parse = "\"" + cityAndState + "\")"
         yql_query = "select * from weather.forecast where woeid in (select woeid from geo.places(1) where text="
         yql_query += parse
+
         try:
             yql_url = baseurl + urlencode({'q': yql_query}) + "&format=json"
             result = urlopen(yql_url).read()
@@ -146,7 +269,8 @@ class Ui_Dialog(object):
                 self.doRequest()
 
                 _translate = QtCore.QCoreApplication.translate
-                trails = ["Old Entrance Road",
+
+                self.trails = ["Old Entrance Road",
                           "Donovan Trail",
                           "Bridges Trail",
                           "Crystal Cave Trail",
@@ -159,7 +283,9 @@ class Ui_Dialog(object):
                           ]
 
                 i = 0
-                for trail in trails:
+
+                for trail in self.trails:
+
                     item = QtWidgets.QListWidgetItem()
                     self.listWidget.addItem(item)
                     item = self.listWidget.item(i)
@@ -174,6 +300,13 @@ class Ui_Dialog(object):
                 msg.setStandardButtons(QtWidgets.QMessageBox.Ok)
                 msg.setWindowTitle("Error")
                 msg.exec()
+
+    def selectRoute(self):
+        self.routeNumber = 0
+        for item in self.listWidget.selectedItems():
+            self.routeNumber = self.trails.index(item.text()) #item.text
+            self.stackedWidget.setCurrentIndex(2)
+
 
     def setupUi(self, Dialog):
         Dialog.setObjectName("Dialog")
@@ -352,7 +485,50 @@ class Ui_Dialog(object):
         self.page_3 = QtWidgets.QWidget()
         self.page_3.setStyleSheet("#page_3 {background-image: url(:/newPrefix/mountain.jpg);}")
         self.page_3.setObjectName("page_3")
+        self.page3Grid = QtWidgets.QGridLayout(self.page_3)
+        self.page3Grid.setObjectName("page3Grid")
+        self.page3GridLayoutWidget = QtWidgets.QWidget(self.page_3)
+        self.page3GridLayoutWidget.setGeometry(QtCore.QRect(0, 0, 221, 301))
+        self.page3GridLayoutWidget.setObjectName("page3GridLayoutWidget")
+        self.page3GridLayout = QtWidgets.QGridLayout(self.page3GridLayoutWidget)
+        self.page3GridLayout.setContentsMargins(0, 0, 0, 0)
+        self.page3GridLayout.setObjectName("page3GridLayout")
+        self.algoData11 = QtWidgets.QLabel(self.page3GridLayoutWidget)
+        self.algoData11.setObjectName("algoData11")
+        self.page3GridLayout.addWidget(self.algoData11, 0, 1, 1, 1)
+        self.algoData11.setFont(font)
+        #self.algoData11.setAlignment(QtCore.Qt.AlignCenter)
+
+        self.backButton3 = QtWidgets.QPushButton(self.page_3)
+        self.backButton3.setGeometry(QtCore.QRect(270, 150, 93, 28))
+        self.backButton3.setFont(BUTTONFONT)
+        self.backButton3.setObjectName("backButton3")
+        self.backButton3.setText("Back")
+        self.CalculateButton = QtWidgets.QPushButton(self.page_3)
+        self.CalculateButton.setGeometry(QtCore.QRect(270, 150, 93, 28))
+        self.CalculateButton.setFont(BUTTONFONT)
+        self.CalculateButton.setObjectName("CalculateButton")
+        self.CalculateButton.setText("Calculate")
+        self.page3Grid.addWidget(self.backButton3, 2, 2, 1, 1)
+        self.page3Grid.addWidget(self.CalculateButton, 1, 2, 1, 1)
+        self.page3Grid.addWidget(self.page3GridLayoutWidget, 1, 1, 3, 1)
+        self.paceIndexBox = QtWidgets.QComboBox()
+        self.paceIndexBox.addItems(['1', '2', '3', '4'])
+        self.page3Grid.addWidget(self.paceIndexBox, 0, 2, 1, 1)
+
+        #font = QtGui.QFont()
+        #font.setFamily("Arial")
+        #font.setPointSize(6)
+        #font.setBold(True)
+        #self.paceLabel = QtWidgets.QLabel(self.page_3)
+        #self.paceLabel.setFont(font)
+        #self.paceLabel.setStyleSheet("color: rgb(255, 255, 255);")
+        #self.paceLabel.setObjectName("paceLabel")
+        #self.paceLabel.setText("Choose Your Pace")#+ "\n" +"1 - Beginner" + "\n" + "4 - Expert")
+        #self.paceLabel.setGeometry(QtCore.QRect(20, 170, 171, 21))
+        #self.page3Grid.addWidget(self.paceLabel, 1, 2, 1, 1)
         self.stackedWidget.addWidget(self.page_3)
+
 
         self.page_4 = QtWidgets.QWidget()
         self.page_4.setStyleSheet("#page_4 {background-image: url(:/newPrefix/mountain.jpg);}")
@@ -420,9 +596,12 @@ class Ui_Dialog(object):
         self.GPSButton.clicked.connect(lambda: self.gpsRequest())
         self.OkayButton.clicked.connect(lambda: self.assertGarner())#lambda: self.stackedWidget.setCurrentIndex(1))
         self.GPSButton.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(3))
-        self.pushButton.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(2))
+        self.pushButton.clicked.connect(lambda: self.selectRoute())
+        self.CalculateButton.clicked.connect(lambda: self.calculateTravelTime(self.routeNumber + 1, self.paceIndexBox.currentIndex() + 1))
         self.backButton.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(0))
         self.backButton2.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(0))
+        self.backButton3.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(1))
+        
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
         self.gridLayout_1.addWidget(self.stackedWidget)#, 0, 0, 1, 1)
