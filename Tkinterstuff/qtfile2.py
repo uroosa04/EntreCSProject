@@ -12,8 +12,127 @@ import json
 from urllib.request import urlopen
 from urllib.parse import urlencode
 import reverse_geocoder as rg
+import math
 
 class Ui_Dialog(object):
+
+    def getTrailInfo(self, x):
+        global milesTraveled
+        global elevationGain
+        global elevationLoss
+        if x==1:
+            print("You have chosen Old Entrance Road!")
+            milesTraveled=.84
+            elevationGain = 120
+            elevationLoss = 20
+        elif x==2:
+            print("You have chosen Donovan Trail!")
+            milesTraveled=.71
+            elevationGain = 240
+            elevationLoss = 40
+        elif x==3:
+            print("You have chosen Bridges Trail!")
+            milesTraveled=.65
+            elevationGain = 40
+            elevationLoss = 40
+        elif x==4:
+            print("You have chosen Crystal Cave Trail!")
+            milesTraveled=.62
+            elevationGain = 360
+            elevationLoss = 40
+        elif x==5:
+            print("You have chosen Blinn River Trail!")
+            milesTraveled=.53
+            elevationGain = 20
+            elevationLoss = 20
+        elif x==6:
+            print("You have chosen Old Baldy Trail!")
+            milesTraveled=.53
+            elevationGain = 440
+            elevationLoss = 40
+        elif x==7:
+            print("You have chosen Foshee Trail!")
+            milesTraveled=1.66
+            elevationGain = 420
+            elevationLoss = 360
+        elif x==8:
+            print("You have chosen Ashe Juniper Trail!")
+            milesTraveled=2.49
+            elevationGain = 320
+            elevationLoss = 200
+        elif x==9:
+            print("You have chosen Old Horse Trail!")
+            milesTraveled=.48
+            elevationGain = 80
+            elevationLoss = 20
+        elif x==10:
+            print("You have chosen Frio Canyon Trail!")
+            milesTraveled=2.88
+            elevationGain = 140
+            elevationLoss = 140
+        else:
+            print("Invalid entry. Please try again.")
+
+    def calculateTravelTime(self, trailNumber, paceIndex):
+        _translate = QtCore.QCoreApplication.translate
+        
+        #Assign trail
+        self.getTrailInfo(trailNumber)
+
+        print(" ")
+
+        #paceIndex=int(input("Input pace index 1 - 4, (1 for beginner, 4 for experienced hiker)"))
+
+        print(" ")
+
+        x =(milesTraveled / 10)
+        fudgeFactor=round(x,1)
+        #print("Fudge Factor: ", fudgeFactor)
+
+        totalMiles = round((milesTraveled + fudgeFactor),1)
+        int(totalMiles)
+        print("Total Miles: " , totalMiles)
+
+
+        climbingRate = 1000 #CONSTANT
+        gainFactor = round(elevationGain / climbingRate,1)
+        #print("Gain Factor: ", gainFactor)
+
+
+        lossRate = 2000 #CONSTANT
+        lossFactor = round((elevationLoss / lossRate),1)
+        #print("Loss Factor: " , lossFactor)
+
+        elevationFactor = (gainFactor - lossFactor)
+        #print("Elevation Factor: " , elevationFactor)
+
+        totalMovingTime = round(((totalMiles/paceIndex)+elevationFactor),1)
+        print("Total Moving Time: ", totalMovingTime, " hours.")
+
+
+        if ((totalMovingTime) > 0) :
+            tempMovingTime=math.floor(totalMovingTime)
+            numLongBreaks=int(tempMovingTime/4)
+            leftoverMovingTime=tempMovingTime-numLongBreaks
+            numshortbreaks=leftoverMovingTime
+            shortbreakstime=(numshortbreaks * 5) 
+            longbreakstime=numLongBreaks * 30
+            print("Short Breaks: ", shortbreakstime, " minutes.")
+            print("Long Breaks: ", longbreakstime, " minutes.")
+        else :
+            shortbreakstime=0
+            longbreakstime=0
+            print("Short Breaks: ", shortbreakstime, " minutes.")
+            print("Long Breaks: ", longbreakstime, " minutes.") 
+
+
+        totalTravelTime = round((totalMovingTime + (shortbreakstime/60) + (longbreakstime/60)),1)
+        print("Total Travel Time: " , totalTravelTime, " hours.")
+        self.algoData11.setText(_translate("Dialog", "Total Miles: " + str(totalMiles) + "\n" +
+            "Total Moving Time: " + str(totalMovingTime) + "\n" +
+            "Short Breaks Time: " + str(shortbreakstime) + "\n" +
+            "Long Breaks Time: " + str(longbreakstime) + "\n"
+            "Total Total Time: " + str(totalTravelTime)))
 
     def gpsRequest(self):
 
@@ -321,7 +440,7 @@ class Ui_Dialog(object):
         self.page3GridLayout.setObjectName("page3GridLayout")
         self.algoData11 = QtWidgets.QLabel(self.page3GridLayoutWidget)
         self.algoData11.setObjectName("algoData11")
-        self.page3GridLayout.addWidget(self.algoData11, 0, 0, 1, 1)
+        self.page3GridLayout.addWidget(self.algoData11, 0, 1, 1, 1)
 
         self.backButton3 = QtWidgets.QPushButton(self.page_3)
         self.backButton3.setGeometry(QtCore.QRect(270, 150, 93, 28))
@@ -421,6 +540,7 @@ class Ui_Dialog(object):
         self.OkayButton.clicked.connect(lambda: self.assertGarner())#lambda: self.stackedWidget.setCurrentIndex(1))
         self.GPSButton.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(3))
         self.pushButton.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(2))
+        self.pushButton.clicked.connect(lambda: self.calculateTravelTime(1, 3))
         self.backButton.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(0))
         self.backButton2.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(0))
         self.backButton3.clicked.connect(lambda: self.stackedWidget.setCurrentIndex(1))
