@@ -129,10 +129,10 @@ class Ui_Dialog(object):
         totalTravelTime = round((totalMovingTime + (shortbreakstime/60) + (longbreakstime/60)),1)
         print("Total Travel Time: " , totalTravelTime, " hours.")
         self.algoData11.setText(_translate("Dialog", "Total Miles: " + str(totalMiles) + "\n" +
-            "Total Moving Time: " + str(totalMovingTime) + "\n" +
-            "Short Breaks Time: " + str(shortbreakstime) + "\n" +
-            "Long Breaks Time: " + str(longbreakstime) + "\n"
-            "Total Total Time: " + str(totalTravelTime)))
+            "Total Moving Time: " + str(totalMovingTime) + " hrs" + "\n" +
+            "Short Breaks Time: " + str(shortbreakstime) + " mins" + "\n" +
+            "Long Breaks Time: " + str(longbreakstime) + " mins"+ "\n"
+            "Total Total Time: " + str(totalTravelTime) + " hrs"))
 
     def gpsRequest(self):
 
@@ -446,7 +446,7 @@ class Ui_Dialog(object):
         self.algoData11.setObjectName("algoData11")
         self.page3GridLayout.addWidget(self.algoData11, 0, 1, 1, 1)
         self.algoData11.setFont(font)
-        self.algoData11.setAlignment(QtCore.Qt.AlignCenter)
+        #self.algoData11.setAlignment(QtCore.Qt.AlignCenter)
 
         self.backButton3 = QtWidgets.QPushButton(self.page_3)
         self.backButton3.setGeometry(QtCore.QRect(270, 150, 93, 28))
